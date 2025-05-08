@@ -1,5 +1,6 @@
 const User = require('../models/user');
 const Airport = require('../models/airport');
+const bcrypt = require('bcrypt');
 
 // Controller logic
 exports.getAllUsers = async (req, res) => {
@@ -13,7 +14,12 @@ exports.getAllUsers = async (req, res) => {
 
 exports.createUser = async (req, res) => {
   try {
-    
+
+    // Hash the password before saving
+    if (req.body.password) {
+      req.body.password = await bcrypt.hash(req.body.password, 10);
+    }
+
     const newUser = new User(req.body);
     const savedUser = await newUser.save();
    

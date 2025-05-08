@@ -18,7 +18,6 @@ const AirportSchema = new mongoose.Schema({
           },],
 }, 
 {
-  timestamps: true, // Adds createdAt and updatedAt fields
   toJSON: {
     transform: (doc, ret) => {
       // Remove internal fields

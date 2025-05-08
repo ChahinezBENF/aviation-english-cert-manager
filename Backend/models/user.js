@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
-const Airport = require('./airport'); // Import the Airport model
+const bcrypt = require('bcrypt'); //bcrypt hash the password
+
 
 const UserSchema = new mongoose.Schema({
   name: { type: String, required: true, },
@@ -25,7 +26,6 @@ const UserSchema = new mongoose.Schema({
     },],
 },
 {
-  timestamps: true, // Adds createdAt and updatedAt fields
   toJSON: {
     transform: (doc, ret) => {
       // Remove internal fields
@@ -95,27 +95,15 @@ UserSchema.pre('findOneAndUpdate', async function (next) {
   next();
 });
 
+//hash passwords.
 
-// // Post-save hook to update the controllers array in Airport
-// // For creation 
-// UserSchema.post('save', async function (doc) {
-//   if (doc.role === 'controller' && doc.airportCode) {
-//     await Airport.findOneAndUpdate(
-//       { code: doc.airportCode },
-//       { $addToSet: { controllers: doc._id } } // Add the user ID to the controllers array
-//     );
-//   }
-// });
+UserSchema.pre('save', async function (next) {
+  if (this.isModified('password')) {
+    this.password = await bcrypt.hash(this.password, 10);
+  }
+  next();
+});
 
-// // Post-update hook to update the controllers array in Airport
-// // For update
-// UserSchema.post('findOneAndUpdate', async function (doc) {
-//   if (doc && doc.role === 'controller' && doc.airportCode) {
-//     await Airport.findOneAndUpdate(
-//       { code: doc.airportCode },
-//       { $addToSet: { controllers: doc._id } }
-//     );
-//   }
-// });
+UserSchema.index({ airportCode: 1 }); // Index for airportCode
 
 module.exports = mongoose.model('User', UserSchema);

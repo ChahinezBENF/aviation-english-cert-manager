@@ -2,6 +2,10 @@ require('dotenv').config();
 const express = require('express');
 const mongoose = require('./db/conn');
 const methodOverride = require('method-override');
+const authRoutes = require('./routes/auth');
+const cors = require('cors');
+
+
 // Import route modules
 const airportRoutes = require('./routes/airport');
 const userRoutes = require('./routes/user');
@@ -14,6 +18,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride('_method'));
 
+app.use(cors())
+
 // Home route
 
 app.get('/', (req, res) => {
@@ -23,6 +29,12 @@ app.get('/', (req, res) => {
 // Routes
 app.use('/airports', airportRoutes);
 app.use('/users', userRoutes);
+//auth route
+app.use('/auth', authRoutes);
+
+
+
+
 
 // Error handler
 app.use((err, req, res, next) => {
