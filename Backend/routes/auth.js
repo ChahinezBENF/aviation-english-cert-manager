@@ -27,7 +27,14 @@ router.post('/login', async (req, res) => {
       process.env.JWT_SECRET,
       { expiresIn: '1d' }
     );
-    res.json({ token, role: user.role });
+    //////////////////////////
+    res.json({
+      id: user._id,  // Make sure `_id` is sent in response
+      email: user.email,
+      role: user.role,
+      token: token
+    });
+
   } catch (err) {
     res.status(500).json({ error: 'Internal server error' });
   }

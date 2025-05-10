@@ -45,6 +45,7 @@ exports.getUserById = async (req, res) => {
   }
 };
 
+
 exports.updateUser = async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
@@ -114,5 +115,4 @@ exports.deleteUser = async (req, res) => {
     res.status(500).json({ error: 'Error deleting user' });
   }
 };
-
 

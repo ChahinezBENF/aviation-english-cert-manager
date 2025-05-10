@@ -7,7 +7,7 @@ function authenticateToken(req, res, next) {
 
   try {
     const verified = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = verified;
+    req.user = { _id: verified.id, role: verified.role };
     next();
   } catch (err) {
     res.status(401).json({ error: 'Invalid token' });
@@ -15,3 +15,4 @@ function authenticateToken(req, res, next) {
 }
 
 module.exports = authenticateToken;
+
