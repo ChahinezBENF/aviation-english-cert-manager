@@ -9,11 +9,14 @@ const router = express.Router();
 // Login endpoint
 router.post('/login', async (req, res) => {
   const { email, password } = req.body;
+
   try {
 
     const user = await User.findOne({ email });
 
-    if (!user) return res.status(401).json({ error: 'Invalid email or password' });
+     if (!user) {
+            return res.status(401).json({ error: 'Invalid email or password' });
+        }
 
     const isMatch = await bcrypt.compare(password, user.password);
 

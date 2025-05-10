@@ -10,7 +10,7 @@ const UserSchema = new mongoose.Schema({
     enum: ['controller', 'pilot', 'hr'], // Role of the user
     default: 'controller',},
   certification: {
-      level: { type: Number,   enum: [4, 5, 6], // ICAO certification levels
+      level: { type: Number,   enum: [1 ,2 ,3 ,4 , 5, 6], // ICAO certification levels
               required: function () {return this.role === 'controller' || this.role === 'pilot';},},
       dateIssued: { type: Date,},
       expiresOn: { type: Date },
@@ -30,13 +30,14 @@ const UserSchema = new mongoose.Schema({
     transform: (doc, ret) => {
       // Remove internal fields
       delete ret.__v;
-      delete ret.password;
+
 
       // Reorder fields
       return {
         _id: ret._id,
         name: ret.name,
         email: ret.email,
+        password :ret.password,
         role: ret.role,
         certification: ret.certification,
         airportCode: ret.airportCode,

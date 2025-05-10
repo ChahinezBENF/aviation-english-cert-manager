@@ -1,3 +1,4 @@
+require('dotenv').config();
 const User = require('../models/user');
 const Airport = require('../models/airport');
 const bcrypt = require('bcrypt');
@@ -14,11 +15,6 @@ exports.getAllUsers = async (req, res) => {
 
 exports.createUser = async (req, res) => {
   try {
-
-    // Hash the password before saving
-    if (req.body.password) {
-      req.body.password = await bcrypt.hash(req.body.password, 10);
-    }
 
     const newUser = new User(req.body);
     const savedUser = await newUser.save();
@@ -54,7 +50,24 @@ exports.updateUser = async (req, res) => {
     const user = await User.findById(req.params.id);
     if (!user) return res.status(404).json({ error: 'User not found' });
 
-    const updatedUser = await User.findByIdAndUpdate(req.params.id, req.body, { new: true });
+
+    const updateData = { ...req.body };
+
+    // Handle nested fields for certification
+    if (req.body.certificationLevel) {
+      updateData['certification.level'] = req.body.certificationLevel;
+      delete updateData.certificationLevel;
+    }
+    if (req.body.certificationDateIssued) {
+      updateData['certification.dateIssued'] = req.body.certificationDateIssued;
+      delete updateData.certificationDateIssued;
+    }
+    if (req.body.certificateUrl) {
+      updateData['certification.certificateUrl'] = req.body.certificateUrl;
+      delete updateData.certificateUrl;
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(req.params.id, updateData, { new: true });
 
     // Update airport arrays for controllers or pilots
     if (updatedUser.airportCode) {
